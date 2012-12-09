@@ -1,5 +1,5 @@
 /*
-  jQuery UI InputImg Plugin 0.0.1
+  jQuery UI InputImg Plugin 0.0.2
   https://github.com/dncrht/inputimg
 
   Copyright (c) 2012 Daniel Cruz Horts
@@ -30,7 +30,8 @@
 
         options: {
             wrapper: 'div',
-            maxSize: 5242880
+            maxSize: 5242880,
+            paperclipDelete: false
         },
 
         _create: function() {
@@ -60,6 +61,17 @@
             var file_info = $('<p><span></span></p>');
             var button_cancel = $('<button type="button" class="btn">x</button>');
 
+            if (this.options.paperclipDelete) {
+            
+                // Builds paperclip delete attribute from input file name with a regexp using negative lookahead. http://frightanic.wordpress.com/2007/06/08/regex-match-last-occurrence/
+                // If input file is named user[nested][avatar]...
+                // ...then checkbox will be user[nested][paperclip_delete_avatar]
+                
+                var check_box_name = this.element.attr('name').replace(/\[(?!.*\[)/, '[paperclip_delete_');
+                var paperclip_delete_checkbox = $('<p><label><input type="checkbox" name="' + check_box_name + '" value="1" /> Delete original image</label><p>');
+                wrapper.append(paperclip_delete_checkbox);  
+            }
+            
             file_info.prepend(button_cancel);
             button_add.after(file_info);
             
@@ -74,7 +86,7 @@
             //
 
             button_cancel.click(function() {
-                that._cancel(img, src, file_info);
+                that._cancel(img, src, file_info, paperclip_delete_checkbox);
             });
 
             this.element.change(function() {
@@ -114,6 +126,11 @@
                     // Show us name and size
                     file_info.find('span').html(file.name + ' (' + that._formatFileSize(file.size) + ')');
                     file_info.show();
+                    
+                    // Hides delete option: if you upload a new image, the current will be deleted so this option may lead to confusion
+                    if (that.options.paperclipDelete) {
+                        paperclip_delete_checkbox.hide();
+                    }
 
                 } else {
                     that._cancel(img, src, file_info);
@@ -122,10 +139,15 @@
 
         },
         
-        _cancel: function(img, src, file_info) {
-                img.attr('src', src);
-                file_info.hide();
-                this.element.val(null);
+        _cancel: function(img, src, file_info, paperclip_delete_checkbox) {
+            img.attr('src', src);
+            file_info.hide();
+            this.element.val(null);
+
+            // If we don't want to upload the image, we still may want to delete the original image
+            if (this.options.paperclipDelete) {
+                paperclip_delete_checkbox.show();
+            }
         },
         
         _setOption: function( key, value ) {},
