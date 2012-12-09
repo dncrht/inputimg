@@ -1,5 +1,5 @@
 /*
-  jQuery UI InputImg Plugin 0.0.2
+  jQuery UI InputImg Plugin 0.0.3
   https://github.com/dncrht/inputimg
 
   Copyright (c) 2012 Daniel Cruz Horts
@@ -37,8 +37,8 @@
         _create: function() {
             
             var that = this,
-            src = this.element.data('src'),
-            clazz = this.element.attr('class');
+                src = this.element.data('src'),
+                clazz = this.element.attr('class');
 
             //
             // Compose additional DOM elements
