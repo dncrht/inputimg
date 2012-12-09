@@ -1,4 +1,7 @@
 /*
+  jQuery UI InputImg Plugin 0.0.1
+  https://github.com/dncrht/inputimg
+
   Copyright (c) 2012 Daniel Cruz Horts
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
