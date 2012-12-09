@@ -55,11 +55,11 @@
             var img = $('<img src="' + src + '" width="' + wrapper.width() + '" />');
             wrapper.append(img);
 
-            var button_add = $('<button type="button" class="btn">+</button>');
-            this.element.before(button_add);
+            var buttonAdd = $('<button type="button" class="btn">+</button>');
+            this.element.before(buttonAdd);
             
-            var file_info = $('<p><span></span></p>');
-            var button_cancel = $('<button type="button" class="btn">x</button>');
+            var fileInfo = $('<p><span></span></p>');
+            var buttonCancel = $('<button type="button" class="btn">x</button>');
 
             if (this.options.paperclipDelete) {
             
@@ -67,26 +67,26 @@
                 // If input file is named user[nested][avatar]...
                 // ...then checkbox will be user[nested][paperclip_delete_avatar]
                 
-                var check_box_name = this.element.attr('name').replace(/\[(?!.*\[)/, '[paperclip_delete_');
-                var paperclip_delete_checkbox = $('<p><label><input type="checkbox" name="' + check_box_name + '" value="1" /> Delete original image</label><p>');
-                wrapper.append(paperclip_delete_checkbox);  
+                var checkBoxName = this.element.attr('name').replace(/\[(?!.*\[)/, '[paperclip_delete_');
+                var paperclipDeleteCheckbox = $('<p><label><input type="checkbox" name="' + checkBoxName + '" value="1" /> Delete original image</label><p>');
+                wrapper.append(paperclipDeleteCheckbox);  
             }
             
-            file_info.prepend(button_cancel);
-            button_add.after(file_info);
+            fileInfo.prepend(buttonCancel);
+            buttonAdd.after(fileInfo);
             
-            button_add.click(function() {
+            buttonAdd.click(function() {
                 that.element.click();
             });
 
-            file_info.hide();
+            fileInfo.hide();
             
             //
             // Glue them with some logic
             //
 
-            button_cancel.click(function() {
-                that._cancel(img, src, file_info, paperclip_delete_checkbox);
+            buttonCancel.click(function() {
+                that._cancel(img, src, fileInfo, paperclipDeleteCheckbox);
             });
 
             this.element.change(function() {
@@ -102,11 +102,11 @@
                     
                     // We perform the type checking on the extension
                     if (/(gif|jpe?g|png)$/.test(name.toLowerCase()) == false) {
-                        that._cancel(img, src, file_info, paperclip_delete_checkbox);
+                        that._cancel(img, src, fileInfo, paperclipDeleteCheckbox);
                         return;
                     }
 
-                    that._afterFileSelection(name, file_info, paperclip_delete_checkbox)
+                    that._afterFileSelection(name, fileInfo, paperclipDeleteCheckbox)
 
                 } else { // For browsers supporting the File API
                     
@@ -117,13 +117,13 @@
                     
                         // Check image type
                         if (/^image\/(gif|jpe?g|png)$/.test(file.type) == false) {
-                            that._cancel(img, src, file_info, paperclip_delete_checkbox);
+                            that._cancel(img, src, fileInfo, paperclipDeleteCheckbox);
                             return;
                         }
 
                         // Check image size
                         if (that.options.maxSize > 0 && file.size > that.options.maxSize) {
-                            that._cancel(img, src, file_info, paperclip_delete_checkbox);
+                            that._cancel(img, src, fileInfo, paperclipDeleteCheckbox);
                             return;
                         }
 
@@ -142,7 +142,7 @@
                         }
 
                         // We have size available to help us compose the label
-                        that._afterFileSelection(file.name + ' (' + that._formatFileSize(file.size) + ')', file_info, paperclip_delete_checkbox)
+                        that._afterFileSelection(file.name + ' (' + that._formatFileSize(file.size) + ')', fileInfo, paperclipDeleteCheckbox)
                     }
                     
                 }
@@ -150,29 +150,29 @@
 
         },
         
-        _cancel: function(img, src, file_info, paperclip_delete_checkbox) {
+        _cancel: function(img, src, fileInfo, paperclipDeleteCheckbox) {
             img.attr('src', src);
-            file_info.hide();
+            fileInfo.hide();
             this.element.val(null);
 
             // If we don't want to upload the image, we still may want to delete the original image
             if (this.options.paperclipDelete) {
-                paperclip_delete_checkbox.show();
+                paperclipDeleteCheckbox.show();
             }
         },
         
-        _afterFileSelection: function(name, file_info, paperclip_delete_checkbox) {
+        _afterFileSelection: function(name, fileInfo, paperclipDeleteCheckbox) {
             // Show us name and size
-            file_info.find('span').html(name);
-            file_info.show();
+            fileInfo.find('span').html(name);
+            fileInfo.show();
                     
             // Hides delete option: if you upload a new image, the current will be deleted so this checkbox may lead to confusion
             if (this.options.paperclipDelete) {
-                paperclip_delete_checkbox.hide();
+                paperclipDeleteCheckbox.hide();
             }
         },
         
-        _setOption: function( key, value ) {},
+        _setOption: function(key, value) {},
 
         _formatFileSize: function(bytes) {
             if (typeof bytes !== 'number') {
