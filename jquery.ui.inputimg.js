@@ -94,7 +94,7 @@
                 // It works like document.getElementById('input_id').files
                 var files = that.element[0].files;
                 
-                if (files != undefined) { // For browsers that doesn't support the File API. http://www.w3.org/TR/FileAPI/
+                if (files == undefined) { // For browsers that doesn't support the File API. http://www.w3.org/TR/FileAPI/
 
                     // Without File API support we can't access type nor size properties
                     // We can only access name, so the clean the C:\Fakepath part from it
