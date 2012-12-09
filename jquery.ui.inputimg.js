@@ -33,6 +33,12 @@
             maxSize: 5242880,
             paperclipDelete: false
         },
+        
+        captions: {
+            add: '+',
+            cancel: 'x',
+            deleteOriginal: 'Delete original image'
+        },
 
         _create: function() {
             
@@ -55,11 +61,11 @@
             var img = $('<img src="' + src + '" width="' + wrapper.width() + '" />');
             wrapper.append(img);
 
-            var buttonAdd = $('<button type="button" class="btn">+</button>');
+            var buttonAdd = $('<button type="button" class="btn">' + this.captions.add + '</button>');
             this.element.before(buttonAdd);
             
             var fileInfo = $('<p><span></span></p>');
-            var buttonCancel = $('<button type="button" class="btn">x</button>');
+            var buttonCancel = $('<button type="button" class="btn">' + this.captions.cancel + '</button>');
 
             if (this.options.paperclipDelete) {
             
@@ -68,7 +74,7 @@
                 // ...then checkbox will be user[nested][paperclip_delete_avatar]
                 
                 var checkBoxName = this.element.attr('name').replace(/\[(?!.*\[)/, '[paperclip_delete_');
-                var paperclipDeleteCheckbox = $('<p><label><input type="checkbox" name="' + checkBoxName + '" value="1" /> Delete original image</label><p>');
+                var paperclipDeleteCheckbox = $('<p><label><input type="checkbox" name="' + checkBoxName + '" value="1" /> ' + this.captions.deleteOriginal + '</label><p>');
                 wrapper.append(paperclipDeleteCheckbox);  
             }
             
