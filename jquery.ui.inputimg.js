@@ -37,8 +37,8 @@
         _create: function() {
             
             var that = this,
-                src = this.element.data('src'),
-                clazz = this.element.attr('class');
+            src = this.element.data('src'),
+            clazz = this.element.attr('class');
 
             //
             // Compose additional DOM elements
@@ -94,46 +94,57 @@
                 // It works like document.getElementById('input_id').files
                 var files = that.element[0].files;
                 
-                if (files.length == 1) {
-                    var file = files[0];
+                if (files != undefined) { // For browsers that doesn't support the File API. http://www.w3.org/TR/FileAPI/
+
+                    // Without File API support we can't access type nor size properties
+                    // We can only access name, so the clean the C:\Fakepath part from it
+                    var name = that.element[0].value.replace(/^.+\\/, '');
                     
-                    // Check file type
-                    if (/^image\/(gif|jpe?g|png)$/.test(file.type) == false) {
-                        that._cancel(img, src, file_info);
+                    // We perform the type checking on the extension
+                    if (/(gif|jpe?g|png)$/.test(name.toLowerCase()) == false) {
+                        that._cancel(img, src, file_info, paperclip_delete_checkbox);
                         return;
                     }
 
-                    // Check file size
-                    if (that.options.maxSize > 0 && file.size > that.options.maxSize) {
-                        that._cancel(img, src, file_info);
-                        return;
-                    }
+                    that._afterFileSelection(name, file_info, paperclip_delete_checkbox)
 
-                    // If browser supports FileReader, show an image preview.
-                    // This is the only way to read original file because the browser cannot access C:\Fakepath
-                    if (!!window.FileReader) {
-
-                        var fr = new FileReader();
-
-                        fr.onload = function(event) {
-                            img.attr('src', event.target.result);
-                        };
-
-                        fr.readAsDataURL(file);
-
-                    }
-
-                    // Show us name and size
-                    file_info.find('span').html(file.name + ' (' + that._formatFileSize(file.size) + ')');
-                    file_info.show();
+                } else { // For browsers supporting the File API
                     
-                    // Hides delete option: if you upload a new image, the current will be deleted so this option may lead to confusion
-                    if (that.options.paperclipDelete) {
-                        paperclip_delete_checkbox.hide();
-                    }
+                    // We only allow one file at a time, even if the input is tricked into multiple=true.
+                    // If there are more than one file selected, doesn't happen anything.
+                    if (files.length == 1) {
+                        var file = files[0];
+                    
+                        // Check image type
+                        if (/^image\/(gif|jpe?g|png)$/.test(file.type) == false) {
+                            that._cancel(img, src, file_info, paperclip_delete_checkbox);
+                            return;
+                        }
 
-                } else {
-                    that._cancel(img, src, file_info);
+                        // Check image size
+                        if (that.options.maxSize > 0 && file.size > that.options.maxSize) {
+                            that._cancel(img, src, file_info, paperclip_delete_checkbox);
+                            return;
+                        }
+
+                        // If browser supports FileReader, show an image preview.
+                        // This is the only way to read original file because the browser cannot access C:\Fakepath
+                        if (!!window.FileReader) {
+
+                            var fr = new FileReader();
+
+                            fr.onload = function(event) {
+                                img.attr('src', event.target.result);
+                            };
+
+                            fr.readAsDataURL(file);
+
+                        }
+
+                        // We have size available to help us compose the label
+                        that._afterFileSelection(file.name + ' (' + that._formatFileSize(file.size) + ')', file_info, paperclip_delete_checkbox)
+                    }
+                    
                 }
             });
 
@@ -147,6 +158,17 @@
             // If we don't want to upload the image, we still may want to delete the original image
             if (this.options.paperclipDelete) {
                 paperclip_delete_checkbox.show();
+            }
+        },
+        
+        _afterFileSelection: function(name, file_info, paperclip_delete_checkbox) {
+            // Show us name and size
+            file_info.find('span').html(name);
+            file_info.show();
+                    
+            // Hides delete option: if you upload a new image, the current will be deleted so this checkbox may lead to confusion
+            if (this.options.paperclipDelete) {
+                paperclip_delete_checkbox.hide();
             }
         },
         
