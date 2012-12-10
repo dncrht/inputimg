@@ -27,7 +27,7 @@
 (function($) {
 
     $.widget('ui.inputimg', {
-
+        
         options: {
             wrapper: 'div',
             maxSize: 5242880,
@@ -47,10 +47,22 @@
                 clazz = this.element.attr('class');
 
             //
-            // Compose additional DOM elements
+            // Hide original widget
             //
 
-            this.element.hide();
+            if ($.browser.webkit && !window.chrome) { // Detect Safari browser. http://stackoverflow.com/a/6978837
+                // Safari, however, doesn't allow to click on a display:none file button for security reasons.
+                // So we send it outside the viewport. http://stackoverflow.com/a/7302101
+                // Keep in mind that mobile Safari even prevents file uploading.
+                this.element.css('position', 'absolute');
+                this.element.css('top', '-100px');                    
+            } else {
+                this.element.hide();
+            }
+                
+            //
+            // Compose additional DOM elements
+            //
 
             clazz = (clazz == undefined) ? '' : ' class="' + clazz + '"';
             var wrapper = $('<' + this.options.wrapper + clazz + '></' + this.options.wrapper + '>');
@@ -82,6 +94,7 @@
             buttonAdd.after(fileInfo);
             
             buttonAdd.click(function() {
+                // When clicking the Add button, we redirect the click to the file button
                 that.element.click();
             });
 
