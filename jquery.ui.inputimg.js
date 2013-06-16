@@ -50,7 +50,8 @@
             // Hide original widget
             //
 
-            if ($.browser.webkit && !window.chrome) { // Detect Safari browser. http://stackoverflow.com/a/6978837
+            if (/webkit/.test(navigator.userAgent.toLowerCase()) && !window.chrome) {
+                // Detect Safari browser. http://stackoverflow.com/a/6978837
                 // Safari, however, doesn't allow to click on a display:none file button for security reasons.
                 // So we send it outside the viewport. http://stackoverflow.com/a/7302101
                 // Keep in mind that mobile Safari even prevents file uploading.
